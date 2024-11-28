@@ -11,6 +11,7 @@ Advanced machine learning project for automated cow detection using state-of-the
 - `data/`: dataset storage
 - `docs/`: project documentation
   - `docs/signed`: signed documents and agreements
+  - `docs/deploy`: deployment documentation
 
 ## 🚀 Quick Start
 
