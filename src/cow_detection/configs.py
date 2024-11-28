@@ -1,10 +1,11 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
 
+
 @dataclass
 class TrainingConfig:
     """
-    Defines the training configuration for the model. 
+    Defines the training configuration for the model.
 
     Attributes:
       epochs (int): Number of epochs to train the model.
@@ -52,6 +53,7 @@ class TrainingConfig:
     hsv_s: float = 0.7
     hsv_v: float = 0.4
 
+
 @dataclass
 class DetectionConfig:
     """
@@ -62,7 +64,7 @@ class DetectionConfig:
       iou_threshold (float): IOU threshold for non-maximum suppression.
       min_area (int): Minimum area of the bounding box.
       max_overlap_ratio (float): Maximum overlap ratio for temporal filtering.
-      temporal_window (int): Number of frames to consider for 
+      temporal_window (int): Number of frames to consider for
                              temporal filtering.
       enable_nms (bool): Whether to use non-maximum suppression.
       enable_temporal (bool): Whether to use temporal filtering.
@@ -77,6 +79,7 @@ class DetectionConfig:
     enable_nms: bool = True
     enable_temporal: bool = True
     enable_size_filter: bool = True
+
 
 @dataclass
 class ConsistencyConfig:

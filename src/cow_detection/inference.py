@@ -7,6 +7,7 @@ from ultralytics import YOLO
 from cow_detection.configs import DetectionConfig
 from cow_detection.detection_tracker import DetectionTracker
 
+
 class YOLOInference:
     """
     YOLO inference class for object detection.
@@ -20,7 +21,7 @@ class YOLOInference:
         post_process(results) -> Any: Post-processes the raw detection results.
         predict_image(image_path: str, save_path: Optional[str] = None, conf_threshold: float = 0.3, iou_threshold: float = 0.7) -> Tuple[np.ndarray, Any]: Performs object detection on the input image and returns the annotated image and detection results.
     """
-    
+
     def __init__(
         self,
         model_path: str = "yolov8m.pt",

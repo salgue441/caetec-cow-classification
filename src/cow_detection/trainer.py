@@ -103,8 +103,7 @@ class YOLOTrainer(YOLOBase):
 
         Returns:
             dict: Data configuration for training the model.
-        """  
-
+        """
 
         config = {
             "train": str(train_path),
