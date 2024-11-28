@@ -1,65 +1,70 @@
 # Use Python slim as base image for ARM architecture
-# FROM arm64v8/python:slim
 FROM arm64v8/python:3.9-slim
 
-# Argumentos para configuración
-ARG CAPTURE_INTERVAL=10
+# Configuration arguments
 ARG CAMERA_ID=0
 ARG IMAGE_WIDTH=1920
 ARG IMAGE_HEIGHT=1080
 
-# Variables de entorno
-ENV CAPTURE_INTERVAL=$CAPTURE_INTERVAL \
-  CAMERA_ID=$CAMERA_ID \
-  IMAGE_WIDTH=$IMAGE_WIDTH \
-  IMAGE_HEIGHT=$IMAGE_HEIGHT \
-  PYTHONUNBUFFERED=1
+# Environment variables
+ENV CAMERA_ID=$CAMERA_ID \
+    IMAGE_WIDTH=$IMAGE_WIDTH \
+    IMAGE_HEIGHT=$IMAGE_HEIGHT \
+    PYTHONUNBUFFERED=1
 
-# Instalar dependencias del sistema y herramientas de compilación
+# Enhanced system dependencies
 RUN apt-get update && apt-get install -y \
-  build-essential \
-  gcc \
-  g++ \
-  python3-dev \
-  libgl1-mesa-glx \
-  libglib2.0-0 \
-  libsm6 \
-  libxext6 \
-  libxrender-dev \
-  libgstreamer1.0-0 \
-  gstreamer1.0-tools \
-  gstreamer1.0-plugins-good \
-  v4l-utils \
-  git \
-  wget \
-  && rm -rf /var/lib/apt/lists/*
+    build-essential \
+    gcc \
+    g++ \
+    python3-dev \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgstreamer1.0-0 \
+    gstreamer1.0-tools \
+    gstreamer1.0-plugins-good \
+    v4l-utils \
+    git \
+    wget \
+    cmake \
+    ninja-build \
+    && rm -rf /var/lib/apt/lists/*
 
-
-# Crear y establecer el directorio de trabajo
 WORKDIR /app
 
-# Copiar los requerimientos primero para aprovechar la caché de Docker
+# Copy requirements first
 COPY requirements.txt .
 
-# Instalar dependencias de Python
+# Install dependencies in specific order
 RUN python -m pip install --upgrade pip && \
-  pip install --no-cache-dir setuptools wheel && \
-  pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir setuptools wheel && \
+    # Install PyTorch and torchvision first
+    pip install --no-cache-dir torch==2.0.1 torchvision==0.15.2 --extra-index-url https://download.pytorch.org/whl/cpu && \
+    # Install other requirements
+    pip install --no-cache-dir -r requirements.txt && \
+    # Install ultralytics with version that supports YOLO9c
+    pip install --no-cache-dir ultralytics>=8.1.0
 
-# Copiar el código y modelos
+# Copy files
 COPY models/ /app/models/
 COPY script.py .
 
-# Crear directorio para logs
+# Create logs directory
 RUN mkdir -p /app/logs
 
-# Metadatos de la imagen
+# Metadata
 LABEL maintainer="Luis Arturo <inarrituzanetti@outlook.com>"
 LABEL version="1.0"
 LABEL description="YOLO Cow Detection for Raspberry Pi"
 
-# Volumen para los logs
+# Volume for logs
 VOLUME ["/app/logs"]
 
-# Comando para ejecutar la aplicación
+# Add a healthcheck to verify Python and critical libraries
+HEALTHCHECK CMD python -c "import torch; import ultralytics; print('Health check passed')" || exit 1
+
+# Run script
 CMD ["python", "script.py"]

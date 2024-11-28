@@ -12,6 +12,14 @@ try:
     AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.environ.get("AWS_REGION")
     BUCKET_NAME = os.environ.get("S3_BUCKET_NAME")
+    # At the top with your other environment variables
+    try:
+        CAMERA_TIME = int(
+            os.environ.get("CAMERA_TIME", "300")
+        )  # Default to 5 seconds if not set
+    except ValueError:
+        print("CAMERA_TIME must be a valid integer. Defaulting to 5 minutes.")
+        CAMERA_TIME = 300
 except Exception as e:
     print(f"Error loading environment variables: {e}")
     exit()
@@ -105,8 +113,8 @@ def main():
         # Upload to S3
         upload_to_s3(frame, num_cows)
 
-        # Wait for 5 seconds before next capture
-        time.sleep(8)
+        # Wait for n seconds before next capture
+        time.sleep(CAMERA_TIME)
 
 
 # Run main function
