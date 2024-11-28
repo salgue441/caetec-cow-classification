@@ -9,7 +9,8 @@ Advanced machine learning project for automated cow detection using state-of-the
 - `src/cow_detection`: main package code
 - `scripts/`: scripts for training and inference
 - `data/`: dataset storage
-- `docs/`: documentation and resources
+- `docs/`: project documentation
+  - `docs/signed`: signed documents and agreements
 
 ## 🚀 Quick Start
 
