@@ -1,0 +1,42 @@
+# # Core dependencies
+# numpy>=2.1.3
+# opencv-python-headless>=4.10.0.84
+# Pillow>=11.0.0
+# PyYAML>=6.0.2
+# requests>=2.32.3
+# scipy>=1.14.1
+# torch>=2.5.1 --index-url https://download.pytorch.org/whl/cpu
+# torchvision>=0.20.1 --index-url https://download.pytorch.org/whl/cpu
+# ultralytics==8.3.29
+# tqdm>=4.67.0
+
+# # AWS dependencies
+# boto3>=1.35.59
+# python-dateutil>=2.9.0.post0
+
+# # Utilities
+# psutil>=6.1.0
+# py-cpuinfo>=9.0.0
+
+# Core dependencies con versiones específicas para ARM64
+numpy>=1.21.0,<1.25.0
+opencv-python-headless==4.8.0.74
+Pillow>=9.0.0,<10.0.0
+PyYAML>=5.3.1,<7.0
+requests>=2.31.0,<3.0.0
+scipy>=1.8.0,<1.11.0
+
+# PyTorch para CPU (versión estable para ARM)
+--find-links https://download.pytorch.org/whl/torch_stable.html
+torch==1.13.1
+torchvision==0.14.1
+
+# YOLO (versión específica que funciona con PyTorch 1.13.1)
+ultralytics==8.0.196
+
+# AWS
+boto3>=1.28.0,<2.0.0
+
+# Utilities
+tqdm>=4.65.0,<5.0.0
+psutil>=5.9.0,<6.0.0

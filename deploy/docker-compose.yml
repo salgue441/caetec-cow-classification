@@ -1,0 +1,16 @@
+services:
+  cow-detector:
+    image: sen00/auto-deploy-cow-project:latest
+    container_name: cow-detector
+    devices:
+      - /dev/video0:/dev/video0
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
