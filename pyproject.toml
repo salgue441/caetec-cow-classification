@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cow-detection"
+version = "0.1.0"
+description = "A YOLO-based cow detection project"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "torch>=1.10.0",
+    "ultralytics",
+    "opencv-python",
+    "numpy",
+    "matplotlib",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+]
+
+[project.scripts]
+train-cow-model = "cow_detection.scripts.train_model:main"
+run-cow-inference = "cow_detection.scripts.run_inference:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["cow_detection"]
