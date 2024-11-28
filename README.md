@@ -13,6 +13,15 @@ Advanced machine learning project for automated cow detection using state-of-the
 
 ## 🚀 Quick Start
 
+In case you need to re-train the model, follow the steps below:
+
+### Prerequisites
+
+- Python 3.10
+- Conda
+
+### Setup
+
 1. Setup Environment
 
 ```bash
