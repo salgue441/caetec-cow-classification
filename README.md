@@ -1,69 +1,108 @@
-# 🐄 Cow Detection Project
+# 🐄 CowVision
 
-## Overview
+Advanced computer vision system for automated cow detection using state-of-the-art YOLO models.
 
-Advanced machine learning project for automated cow detection using state-of-the-art YOLO models.
+## ✨ Features
 
-## 🛠 Project Structure
+- **Multiple Inference Modes**: visual output or CLI-only for automation
+- **Batch Processing**: process entire directories with a single command
+- **Flexible Configuration**: customize confidence thresholds, IoU, and more
+- **Easy Integration**: simple Python API for integration into larger systems
 
-- `src/cow_detection`: main package code
-- `scripts/`: scripts for training and inference
-- `data/`: dataset storage
-- `docs/`: project documentation
-  - `docs/signed`: signed documents and agreements
-  - `docs/deploy`: deployment documentation
-
-## 🚀 Quick Start
-
-In case you need to re-train the model, follow the steps below:
+## 🚀 Installation
 
 ### Prerequisites
 
 - Python 3.10
-- Conda
+- Conda (recommended) or venv
 
 ### Setup
 
-1. Setup Environment
+#### Docker
+
+#### Manual Install
 
 ```bash
+# Clone repository
 git clone https://github.com/salgue441/caetec-cow-classification
 cd caetec-cow-classification
 
-conda create -n cow-detection python=3.10
-conda activate cow-detection
+# Create and activate environment
+conda create -n cowvision python=3.10
+conda activate cowvision
 
 # Install dependencies
 pip install -e .
 ```
 
-2. Prepare data
+## 📊 Usage
 
-Organize your dataset in the following structure:
-
-```bash
-data/
-├── train/
-│   ├── images/
-│   └── labels/
-├── valid/
-│   ├── images/
-│   └── labels/
-└── data.yaml
-```
-
-3. Training
+### Training
 
 ```bash
-train-cow-model --data_yaml data/data.yaml --epochs 100 --batch_size 16
+# Train with default parameters
+train-cow-model --data_yaml data/data.yaml
+
+# Train with custom parameters
+train-cow-model --data_yaml data/data.yaml --epochs 100 --batch_size 16 --img_size 640
 ```
 
-4. Inference for single images
+### Inference
+
+#### Single Image
 
 ```bash
-run-cow-inference --image path/to/your/image.jpg --output detected_cows.jpg
+# Visual output (with bounding boxes)
+run-cow-inference --image path/to/image.jpg --output results/detected.jpg
+
+# CLI output only
+run-cow-inference --image path/to/image.jpg --no-render
 ```
 
-## 🔍 Contact
+#### Batch Processing
 
-If you have any questions, feel free to reach out to me at [Vaqueros de Datos](mailto:vaquerosdedatos@gamil.com)
+```bash
+# Process directory with visualization
+run-cow-inference --dir path/to/images/ --output results/
+
+# Process directory with CLI output only
+run-cow-inference --dir path/to/images/ --no-render
+```
+
+#### Advanced Options
+
+```bash
+# Custom model and high confidence threshold
+run-cow-inference --dir path/to/images/ \
+                  --model yolov9c.pt \
+                  --weights custom_weights.pt \
+                  --conf 0.6 \
+                  --min-area 350
+```
+
+## 🏗️ Architecture
+
+```plaintext
+cow-detection/
+├── src/
+│   └── cow_detection/       # Core package
+│       ├── configs/         # Configuration classes
+│       ├── data/            # Data handling utilities
+│       ├── detection/       # Detection algorithms
+│       ├── inference.py     # Inference module
+│       ├── tracker.py       # Object tracking
+│       └── utils/           # Helper functions
+├── scripts/                 # Training and utility scripts
+├── data/                    # Dataset storage
+├── models/                  # Pre-trained models
+├── tests/                   # Testing suite
+└── docs/                    # Documentation
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 📞 Contact
+
+If you have any questions, feel free to reach out to [Vaqueros de Datos](mailto:vaquerosdedatos@gamil.com)

@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from pathlib import Path
-from typing import Any, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ultralytics import YOLO
 from cow_detection.configs import DetectionConfig
@@ -19,7 +19,12 @@ class YOLOInference:
 
     Methods:
         post_process(results) -> Any: Post-processes the raw detection results.
-        predict_image(image_path: str, save_path: Optional[str] = None, conf_threshold: float = 0.3, iou_threshold: float = 0.7) -> Tuple[np.ndarray, Any]: Performs object detection on the input image and returns the annotated image and detection results.
+        predict_image(image_path: str, save_path: Optional[str] = None, conf_threshold: float = 0.3,
+                     iou_threshold: float = 0.7, render_boxes: bool = True) -> Union[Tuple[np.ndarray, Any], Dict[str, Any]]:
+            Performs object detection on the input image and returns either the annotated image and detection results
+            or a dictionary with detection information.
+        get_detection_summary(results) -> Dict[str, Any]:
+            Returns a summary of the detection results including count and probabilities.
     """
 
     def __init__(
@@ -33,7 +38,6 @@ class YOLOInference:
         """
         if weights_path:
             self.model = YOLO(weights_path)
-
         else:
             self.model = YOLO(model_path)
 
@@ -50,7 +54,6 @@ class YOLOInference:
         Returns:
             Any: Post-processed detection results.
         """
-
         if results.boxes is None or len(results.boxes) == 0:
             return results
 
@@ -72,39 +75,75 @@ class YOLOInference:
         results.boxes = results.boxes[mask]
         return results
 
+    def get_detection_summary(self, results) -> Dict[str, Any]:
+        """
+        Returns a summary of the detection results including count and probabilities.
+
+        Args:
+            results: Post-processed detection results.
+
+        Returns:
+            Dict[str, Any]: Dictionary containing detection summary.
+        """
+        detection_summary = {"detection_count": 0, "probabilities": []}
+
+        if results.boxes is not None and len(results.boxes) > 0:
+            boxes = results.boxes.cpu().numpy()
+            detection_summary["detection_count"] = len(boxes)
+            detection_summary["probabilities"] = [float(box.conf[0]) for box in boxes]
+
+        return detection_summary
+
     def predict_image(
         self,
         image_path: str,
         save_path: Optional[str] = None,
-        conf_threshold: float = 0.3,
-        iou_threshold: float = 0.7,
-    ) -> Tuple[np.ndarray, Any]:
+        conf_threshold: float = None,
+        iou_threshold: float = None,
+        render_boxes: bool = True,
+    ) -> Union[Tuple[np.ndarray, Any], Dict[str, Any]]:
         """
-        Performs object detection on the input image and returns the annotated image and detection results.
+        Performs object detection on the input image and returns either the annotated
+        image and detection results or a dictionary with detection information.
 
         Args:
             image_path (str): Path to the input image.
             save_path (Optional[str]): Path to save the annotated image.
-            conf_threshold (float): Confidence threshold for detection.
-            iou_threshold (float): IoU threshold for detection.
+            conf_threshold (float, optional): Confidence threshold for detection.
+                                              If None, uses the value from detection_config.
+            iou_threshold (float, optional): IoU threshold for detection.
+                                             If None, uses the value from detection_config.
+            render_boxes (bool): Whether to render bounding boxes on the image or just return detection info.
 
         Returns:
-            Tuple[np.ndarray, Any]: Annotated image and detection results.
+            Union[Tuple[np.ndarray, Any], Dict[str, Any]]:
+                If render_boxes=True: Annotated image and detection results.
+                If render_boxes=False: Dictionary with detection summary.
         """
-
         image = cv2.imread(image_path)
         if image is None:
             raise ValueError(f"Failed to read image: {image_path}")
 
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        conf_threshold = conf_threshold or self.detection_config.conf_threshold
-        iou_threshold = iou_threshold or self.detection_config.iou_threshold
+        conf_threshold = (
+            conf_threshold
+            if conf_threshold is not None
+            else self.detection_config.conf_threshold
+        )
+        iou_threshold = (
+            iou_threshold
+            if iou_threshold is not None
+            else self.detection_config.iou_threshold
+        )
 
         results = self.model(
             image, verbose=False, conf=conf_threshold, iou=iou_threshold, max_det=20
         )[0]
 
         results = self.post_process(results)
+        if not render_boxes:
+            return self.get_detection_summary(results)
+
         annotated_image = image.copy()
 
         if results.boxes is not None and len(results.boxes) > 0:

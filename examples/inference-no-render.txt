@@ -1,0 +1,7 @@
+Image: 2024-04-12-14-30-03_jpg.rf.230619284902124f1e5aa940f3b79ef9.jpg
+  Detections: 5
+  Detection 1: probability 0.78
+  Detection 2: probability 0.76
+  Detection 3: probability 0.75
+  Detection 4: probability 0.71
+  Detection 5: probability 0.47
