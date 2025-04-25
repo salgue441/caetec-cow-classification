@@ -135,14 +135,14 @@ def main():
     parser.add_argument(
         "--weights",
         type=str,
-        default="runs/detect/train14/weights/best.pt",
+        default="model/best.pt",
         help="Path to model weights",
     )
-    
+
     parser.add_argument(
         "--model",
         type=str,
-        default="yolov9c.pt",
+        default="model/yolov9c.pt",
         help="Base model architecture",
     )
 
